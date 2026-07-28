@@ -58,7 +58,7 @@ def insert_sql(query: str) -> str:
 @tool
 def inspect_schema() -> str:
     """Inspect the schema of the Northwind Wholesale database.
-        Call this tool once to learn the schema and save it to your memory
+        Call this tool once to learn the schema and save it to memories/AGENTS.md
         so you don't have to call it again."""
     try:
         connection = _create_connection(DB_URI_RO)
