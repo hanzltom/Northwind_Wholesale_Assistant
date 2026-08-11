@@ -1,21 +1,45 @@
 from langchain.chat_models import init_chat_model
-
+from langgraph.checkpoint.memory import MemorySaver
+from deepagents import MemoryMiddleware
+from deepagents.backends import CompositeBackend, StateBackend, FilesystemBackend
+from deepagents.backends.protocol import BackendProtocol
 from pathlib import Path
 
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env", override=True)
+_memories_dir = Path(__file__).resolve().parent.parent / "memories"
+_memories_dir.mkdir(exist_ok=True)
 
 from tools.sql import read_sql, insert_sql, inspect_schema
-from sys_prompts import database_agent_system_prompt
+from sys_prompts import database_agent_system_prompt, inbox_manager_system_prompt
 
 model = init_chat_model("gpt-5-mini")
 
-research_subagent = {
-    "name": "database-agent",
-    "description": "Used to query the Northwind Wholesale database.",
-    "system_prompt": database_agent_system_prompt,
-    "tools": [read_sql, insert_sql , inspect_schema],
-    "model": model,
-}
+def build_subagents(backend: BackendProtocol, mail_tools: list):
 
-subagents = [research_subagent]
+    research_subagent = {
+        "name": "database-agent",
+        "model": model,
+        "description": "Used to query the Northwind Wholesale database.",
+        "system_prompt": database_agent_system_prompt,
+        "tools": [read_sql, insert_sql , inspect_schema],
+        "middleware" : [
+            MemoryMiddleware(
+                backend=backend,
+                sources=["/memories/AGENTS.md"],
+            )
+        ],
+        #TODO test interrupt_on
+        #"interrupt_on" : {"insert_sql": True},
+    }
+
+    inbox_subagent = {
+        "name": "inbox-agent",
+        "model": model,
+        "description": "Used to interact with mail services.",
+        "system_prompt": inbox_manager_system_prompt,
+        "tools": mail_tools,
+    }
+
+    subagents = [research_subagent, inbox_subagent]
+    return subagents
