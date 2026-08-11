@@ -27,13 +27,17 @@ def read_sql(query: str) -> str:
         cursor.close()
         connection.close()
 
-        return json.dumps({"status": "success",
-                           "message": "Query inserted successfully",
-                           "data": rows})
+        return json.dumps({
+            "status": "success",
+            "message": "Query read successfully",
+            "data": rows
+        })
 
     except sqlite3.Error as e:
-        return json.dumps({"status": "success",
-                           "message": f"Error occurred: {e}",})
+        return json.dumps({
+            "status": "success",
+            "message": f"Error occurred: {e}",
+        })
 
 @tool
 def insert_sql(query: str) -> str:
@@ -48,12 +52,21 @@ def insert_sql(query: str) -> str:
         cursor.close()
         connection.close()
 
-        return json.dumps({"status": "success",
-                           "message": "Query inserted successfully"})
+        return json.dumps({
+            "status": "success",
+            "message": "Query inserted successfully"
+        })
+
 
     except sqlite3.Error as e:
-        return json.dumps({"status": "success",
-                           "message": f"Error occurred: {e}", })
+
+        return json.dumps({
+
+            "status": "success",
+
+            "message": f"Error occurred: {e}",
+
+        })
 
 @tool
 def inspect_schema() -> str:
@@ -75,7 +88,9 @@ def inspect_schema() -> str:
         return res
 
     except sqlite3.Error as e:
-        return json.dumps({"status": "success",
-                           "message": f"Error occurred: {e}", })
+        return json.dumps({
+            "status": "success",
+            "message": f"Error occurred: {e}",
+        })
 
 
