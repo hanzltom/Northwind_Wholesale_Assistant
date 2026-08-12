@@ -41,7 +41,7 @@ def read_sql(query: str) -> str:
 
 @tool
 def insert_sql(query: str) -> str:
-    """Run an INSERT query to add a new Customer, Product, Supplier, etc."""
+    """Run an INSERT query to add a new Customer, Product, Supplier, etc. [HITL]"""
     try:
         connection = _create_connection(DB_URI_RW)
         cursor = connection.cursor()
