@@ -16,6 +16,19 @@ from sys_prompts import database_agent_system_prompt, inbox_manager_system_promp
 model = init_chat_model("gpt-5-mini")
 
 def build_subagents(backend: BackendProtocol, mail_tools: list):
+    db_tools = [read_sql, insert_sql, inspect_schema]
+
+    db_interrupts = {
+        tool.name: True
+        for tool in db_tools
+        if "[HITL]" in tool.description
+    }
+
+    mail_interrupts = {
+        tool.name: True
+        for tool in mail_tools
+        if "[HITL]" in tool.description
+    }
 
     research_subagent = {
         "name": "database-agent",
@@ -29,8 +42,7 @@ def build_subagents(backend: BackendProtocol, mail_tools: list):
                 sources=["/memories/AGENTS.md"],
             )
         ],
-        #TODO test interrupt_on
-        #"interrupt_on" : {"insert_sql": True},
+        "interrupt_on" : db_interrupts,
     }
 
     inbox_subagent = {
@@ -39,6 +51,7 @@ def build_subagents(backend: BackendProtocol, mail_tools: list):
         "description": "Used to interact with mail services.",
         "system_prompt": inbox_manager_system_prompt,
         "tools": mail_tools,
+        "interrupt_on": mail_interrupts,
     }
 
     subagents = [research_subagent, inbox_subagent]
