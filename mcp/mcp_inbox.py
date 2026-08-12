@@ -46,7 +46,7 @@ def read_email(email_id: str) -> Dict[str, Any]:
 
 @mcp.tool
 def send_email(to_email: str, subject: str, body: str) -> str:
-    """Send an email reply to a customer and record it in the outbox."""
+    """Send an email reply to a customer and record it in the outbox. [HITL]"""
     new_message = {
         "to": to_email,
         "subject": subject,
