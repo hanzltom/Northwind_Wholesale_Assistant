@@ -7,6 +7,7 @@ from langchain_quickjs import CodeInterpreterMiddleware
 from subagents import build_subagents
 from pathlib import Path
 
+import os
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env", override=True)
 
@@ -16,6 +17,7 @@ model = init_chat_model("gpt-5-mini")
 
 _backend = FilesystemBackend(root_dir=str(THIS_FILE), virtual_mode=True)
 
+_enable_search = bool(os.environ.get("TAVILY_API_KEY"))
 
 async def create_manager():
     client = MultiServerMCPClient({
@@ -30,9 +32,17 @@ async def create_manager():
         name="manager",
         model=model,
         system_prompt="You are a helpful manager for Northwind Wholesale.",
-        subagents=build_subagents(backend= _backend, mail_tools=mail_tools),
+        subagents=build_subagents(backend= _backend, mail_tools=mail_tools, search=_enable_search),
         skills=["/skills"],
         memory=["/AGENTS.md"],
         backend=_backend,
         middleware=[CodeInterpreterMiddleware()],
+        permissions=[
+            FilesystemPermission(
+                operations=["write"],
+                paths=["/**"],
+                mode="deny",
+            ),
+        ],
+
     )
