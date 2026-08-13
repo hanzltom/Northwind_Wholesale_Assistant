@@ -54,5 +54,12 @@ def build_subagents(backend: BackendProtocol, mail_tools: list):
         "interrupt_on": mail_interrupts,
     }
 
-    subagents = [research_subagent, inbox_subagent]
+    quote_reviewer = {
+        "name": "quote-reviewer",
+        "model": model,
+        "description": "Review a drafted quote (line items, discount, total) for correct arithmetic and sane pricing before it is sent. Send it the numbers.",
+        "system_prompt": quote_reviewer_system_prompt,
+    }
+
+    subagents = [research_subagent, inbox_subagent, quote_reviewer]
     return subagents
