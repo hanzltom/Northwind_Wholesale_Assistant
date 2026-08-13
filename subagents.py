@@ -11,11 +11,12 @@ _memories_dir = Path(__file__).resolve().parent.parent / "memories"
 _memories_dir.mkdir(exist_ok=True)
 
 from tools.sql import read_sql, insert_sql, inspect_schema
-from sys_prompts import database_agent_system_prompt, inbox_manager_system_prompt
+from tools.search import internet_search
+from sys_prompts import database_agent_system_prompt, inbox_manager_system_prompt, quote_reviewer_system_prompt, search_agent_system_prompt
 
 model = init_chat_model("gpt-5-mini")
 
-def build_subagents(backend: BackendProtocol, mail_tools: list):
+def build_subagents(backend: BackendProtocol, mail_tools: list, search: bool = False):
     db_tools = [read_sql, insert_sql, inspect_schema]
 
     db_interrupts = {
@@ -30,8 +31,9 @@ def build_subagents(backend: BackendProtocol, mail_tools: list):
         if "[HITL]" in tool.description
     }
 
-    research_subagent = {
-        "name": "database-agent",
+    subagents = []
+    database_analyst = {
+        "name": "database-analyst",
         "model": model,
         "description": "Used to query the Northwind Wholesale database.",
         "system_prompt": database_agent_system_prompt,
@@ -45,8 +47,8 @@ def build_subagents(backend: BackendProtocol, mail_tools: list):
         "interrupt_on" : db_interrupts,
     }
 
-    inbox_subagent = {
-        "name": "inbox-agent",
+    inbox_manager = {
+        "name": "inbox-manager",
         "model": model,
         "description": "Used to interact with mail services.",
         "system_prompt": inbox_manager_system_prompt,
@@ -57,9 +59,20 @@ def build_subagents(backend: BackendProtocol, mail_tools: list):
     quote_reviewer = {
         "name": "quote-reviewer",
         "model": model,
-        "description": "Review a drafted quote (line items, discount, total) for correct arithmetic and sane pricing before it is sent. Send it the numbers.",
+        "description": "Used to review a drafted quote (line items, discount, total) for correct arithmetic and sane pricing before it is sent. Send it the numbers.",
         "system_prompt": quote_reviewer_system_prompt,
     }
 
-    subagents = [research_subagent, inbox_subagent, quote_reviewer]
+    if search:
+        trend_researcher = {
+            "name": "trend-researcher",
+            "model": model,
+            "description": "Used to search for information and trends across the internet.",
+            "system_prompt": search_agent_system_prompt,
+            "tools": [internet_search]
+        }
+
+        subagents.append(trend_researcher)
+
+    subagents.extend([database_analyst, inbox_manager, quote_reviewer])
     return subagents
