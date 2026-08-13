@@ -1,7 +1,7 @@
 {
   "dependencies": ["."],
   "graphs": {
-    "wholesale_assistant": "./manager.py:create_manager"
+    "agent": "./manager.py:create_manager"
   },
   "env": ".env"
 }
