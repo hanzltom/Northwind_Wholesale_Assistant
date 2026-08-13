@@ -2,6 +2,7 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from deepagents import create_deep_agent
 from langchain.chat_models import init_chat_model
 from deepagents.backends import FilesystemBackend
+from langchain_quickjs import CodeInterpreterMiddleware
 
 from subagents import build_subagents
 from pathlib import Path
@@ -33,4 +34,5 @@ async def create_manager():
         skills=["/skills"],
         memory=["/AGENTS.md"],
         backend=_backend,
+        middleware=[CodeInterpreterMiddleware()],
     )
