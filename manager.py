@@ -3,12 +3,15 @@ from deepagents import create_deep_agent
 from langchain.chat_models import init_chat_model
 from deepagents.backends import FilesystemBackend
 from langchain_quickjs import CodeInterpreterMiddleware
+from deepagents import FilesystemPermission
 
 from subagents import build_subagents
-from pathlib import Path
+from tools.format import markdown_to_html
 
 import os
 from dotenv import load_dotenv
+from pathlib import Path
+
 load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env", override=True)
 
 THIS_FILE = Path(__file__).resolve().parent
@@ -34,10 +37,21 @@ async def create_manager():
         system_prompt="You are a helpful manager for Northwind Wholesale.",
         subagents=build_subagents(backend= _backend, mail_tools=mail_tools, search=_enable_search),
         skills=["/skills"],
+        tools=[markdown_to_html],
         memory=["/AGENTS.md"],
         backend=_backend,
         middleware=[CodeInterpreterMiddleware()],
         permissions=[
+            FilesystemPermission(
+                operations=["read"],
+                paths=["/**"],
+                mode="allow",
+            ),
+            FilesystemPermission(
+                operations=["read", "write"],
+                paths=["/newsletters/**"],
+                mode="allow",
+            ),
             FilesystemPermission(
                 operations=["write"],
                 paths=["/**"],
