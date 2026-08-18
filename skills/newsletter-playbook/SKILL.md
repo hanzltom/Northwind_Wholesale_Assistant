@@ -23,5 +23,5 @@ Use this playbook whenever you are asked to draft, save, or send the weekly Nort
 2. Pass your Markdown draft into the tool to generate the final HTML string. Do not skip this step; raw Markdown does not render correctly in our clients inboxes.
 
 ## Step 4: Dispatch or Save the Newsletter
-1. When sending, delegate to the inbox-manager. Provide the final HTML string as the body of the email. Set the subject line to Northwind Gourmet Dispatch. This will trigger the HITL gate for Nancy to review.
-2. When saving, use your write_file tool to save the final HTML string directly to the filesystem. Save it in the /newsletters/ directory using a clear, dated filename.
+1. IF THE USER ASKED TO DRAFT OR SAVE: Do NOT delegate to the inbox-manager. Do NOT send the email. Instead, use your write_file tool to save the HTML string to the /newsletters/ directory using a clear, dated filename (e.g. 2026-08-18-dispatch.html).
+2. IF THE USER EXPLICITLY ASKED TO SEND: Delegate to the inbox-manager. Provide the final HTML string as the body of the email. Set the subject line to Northwind Gourmet Dispatch.
