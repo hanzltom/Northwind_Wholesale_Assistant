@@ -53,6 +53,16 @@ async def create_manager():
                 mode="allow",
             ),
             FilesystemPermission(
+                operations=["write"],
+                paths=["/reports/**"],
+                mode="allow",
+            ),
+            FilesystemPermission(
+                operations=["write"],
+                paths=["/memories/**"],
+                mode="allow",
+            ),
+            FilesystemPermission(
                 operations=["read", "write"],
                 paths=["/data/**"],
                 mode="allow",
