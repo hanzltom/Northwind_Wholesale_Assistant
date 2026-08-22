@@ -1,6 +1,10 @@
 # Northwind Wholesale Assistant
 
-This project is a multi-agent AI sales assistant built with LangGraph for Northwind Traders, a B2B specialty foods distributor. It acts as an autonomous proxy for Account Representatives, handling client communications, dynamic quoting, and data analysis while enforcing strict Human-in-the-Loop (HITL) approval gates for critical actions.
+This project is a multi-agent AI sales assistant built with LangGraph 
+for Northwind Traders, a B2B specialty foods distributor. 
+It acts as an autonomous proxy for Account Representatives, 
+handling client communications, dynamic quoting, and data analysis while 
+enforcing Human-in-the-Loop (HITL) approval gates for critical actions.
 
 ## Capabilities
 
@@ -11,7 +15,7 @@ This project is a multi-agent AI sales assistant built with LangGraph for Northw
 
 ## Agent Architecture
 
-The system operates on a hub-and-spoke model. The central Manager orchestrates complex workflows using dynamically loaded YAML playbooks and delegates narrow tasks to four specialized subagents:
+The central Manager orchestrates complex workflows using dynamically loaded YAML playbooks and delegates narrow tasks to four specialized subagents:
 
 *   **database-analyst**: Manages all SQLite interactions (inventory checks, price lookups, and customer creation).
 *   **inbox-manager**: Interfaces with the external Mail system via the Model Context Protocol (MCP).
@@ -20,7 +24,6 @@ The system operates on a hub-and-spoke model. The central Manager orchestrates c
 
 ## Setup Instructions
 
-The assistant runs entirely locally and employs a "default deny" filesystem permissions model, ensuring the AI can only write to designated directories. 
 
 1. **Clone the repository:**
    ```bash
@@ -39,10 +42,23 @@ The assistant runs entirely locally and employs a "default deny" filesystem perm
    pip install -r requirements.txt
     ```
    
-4. **Make the script executable:**
+4. **Create and fill in the .env file:**
+ 
+   ```bash
+    cp .env.example .env
+    ```
+   Edit the `.env` file to include your OpenAI API key, Tavily API key ([here](https://www.tavily.com/)), and Langsmith API key ([here](https://smith.langchain.com/)).
+
+   
+5. **Create an executable start script:**
     ```bash
    chmod +x start.sh
     ```
    
-5. **Visit ChatUI interface:**
+6. **Run the script:**
+    ```bash
+   ./start.sh
+    ```
+   
+7. **Visit ChatUI interface:**
     https://agentchat.vercel.app
